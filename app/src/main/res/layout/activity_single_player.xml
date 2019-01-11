@@ -8,18 +8,18 @@
     android:gravity="center"
     tools:context=".SinglePlayerActivity">
 
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/GridLayout"
+    <GridLayout
+        android:id="@+id/gameGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:columnCount="3"
-        app:orientation="horizontal">
+        android:columnCount="3"
+        android:orientation="horizontal">
 
-    </android.support.v7.widget.GridLayout>
+    </GridLayout>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/playerTurnTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView" />
@@ -28,5 +28,29 @@
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:onClick="onStartOverClick"
+        android:text="Reset game" />
+
+    <android.support.v7.widget.GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:columnCount="2"
+        app:rowCount="1">
+
+        <Button
+            android:id="@+id/Button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="decreaseSizeReset"
+            android:text="-1 size" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="increaseSizeReset"
+            android:text="+1 size"
+            app:layout_column="1"
+            app:layout_row="0" />
+    </android.support.v7.widget.GridLayout>
 </LinearLayout>

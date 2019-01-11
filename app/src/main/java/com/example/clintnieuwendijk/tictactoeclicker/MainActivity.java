@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()){
             case R.id.singlePlayerStartButton:
                 intent = new Intent(MainActivity.this, SinglePlayerActivity.class);
+                intent.putExtra("gridSize", 6);
                 break;
             case R.id.multiplayerStartButton:
                 intent = new Intent(MainActivity.this, MultiplayerActivity.class);
@@ -28,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.upgradeButton:
                 intent = new Intent(MainActivity.this, UpgradeActivity.class);
                 break;
+            default:
+                intent = new Intent(MainActivity.this, MainActivity.class);
         }
+        startActivity(intent);
     }
 }
