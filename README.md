@@ -14,7 +14,7 @@ Optionally, the player can go online to play, earning more tokens than regular p
 
 <h4>External components</h4>
 
--
+-Taaqif Peck's dynamic sized Tic Tac Toe: https://github.com/Taaqif/TicTacToe-Android
 
 <h4>Similar apps</h4>
 
