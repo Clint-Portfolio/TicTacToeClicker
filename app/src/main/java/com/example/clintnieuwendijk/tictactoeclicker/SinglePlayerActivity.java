@@ -118,7 +118,7 @@ public class SinglePlayerActivity extends AppCompatActivity {
                 //simple styling
                 b.setMinHeight(0);
                 b.setMinimumHeight(0);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
                 b.setLayoutParams(params);
                 //add the newly created button to the grid
                 layout.addView(b);

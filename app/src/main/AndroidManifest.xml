@@ -16,10 +16,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SinglePlayerActivity" />
-        <activity android:name=".MultiplayerActivity" />
-        <activity android:name=".OptionsActivity" />
-        <activity android:name=".UpgradeActivity"></activity>
+        <activity
+            android:name=".SinglePlayerActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MultiplayerActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".OptionsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UpgradeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity android:name=".UpgradeAdapter"></activity>
     </application>
 
 </manifest>

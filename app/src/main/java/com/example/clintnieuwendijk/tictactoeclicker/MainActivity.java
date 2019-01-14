@@ -7,6 +7,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    UpgradeDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()){
             case R.id.singlePlayerStartButton:
                 intent = new Intent(MainActivity.this, SinglePlayerActivity.class);
-                intent.putExtra("gridSize", 6);
+                intent.putExtra("gridSize", 2);
                 break;
             case R.id.multiplayerStartButton:
                 intent = new Intent(MainActivity.this, MultiplayerActivity.class);
