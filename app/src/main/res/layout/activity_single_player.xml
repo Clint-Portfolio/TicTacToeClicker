@@ -53,4 +53,12 @@
             app:layout_column="1"
             app:layout_row="0" />
     </android.support.v7.widget.GridLayout>
+
+    <TextView
+        android:id="@+id/scoreView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAlignment="center" />
+
 </LinearLayout>

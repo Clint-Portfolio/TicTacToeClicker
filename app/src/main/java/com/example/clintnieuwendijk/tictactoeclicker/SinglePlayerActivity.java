@@ -17,12 +17,18 @@ import android.widget.Toast;
 
 public class SinglePlayerActivity extends AppCompatActivity {
 
+    private int currentTokens;
+
     private TicTacToeGame Matrix;
     private int numRows;
     private int numCols;
 
+    PlayerDatabase playerDB;
+    UpgradeDatabase upgradeDB;
+
     Button buttons[];
     TextView playerTurnView;
+    TextView scoreView;
 
     int cellIndex;
 
@@ -43,13 +49,25 @@ public class SinglePlayerActivity extends AppCompatActivity {
         } else {
             initGame();
         }
+
+        playerDB = PlayerDatabase.getInstance(getApplicationContext());
+
+        scoreView = findViewById(R.id.ScoreView);
+        currentTokens = 0;
+
+        updateScore(currentTokens);
+    }
+
+    public void updateScore(int score) {
+        scoreView = (TextView) findViewById(R.id.scoreView);
+        scoreView.setText(String.format("Score: %d", score));
     }
 
     /**
      * initialise the game
      */
     private void initGame(){
-        //if the board doesnt exisit, create a new one
+        //if the board doesn't exist, create a new one
         if (Matrix == null){
             Matrix = new TicTacToeGame(numRows, numCols);
         }
@@ -188,8 +206,9 @@ public class SinglePlayerActivity extends AppCompatActivity {
                 textResId = "O";
                 Matrix.setWhoIsPlaying(TicTacToeGame.cross);
             }
-
             buttons[index].setText(textResId);
+            currentTokens += 1;
+            updateScore(currentTokens);
         }
         return isUpdated;
     }
@@ -227,10 +246,17 @@ public class SinglePlayerActivity extends AppCompatActivity {
      * @param v
      */
     public void onStartOverClick(View v){
+        playerDB.updateTokens(currentTokens);
+        int totalTokens = playerDB.getTokens();
+        Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
         initGame();
     }
 
     public void decreaseSizeReset(View v){
+        playerDB.updateTokens(currentTokens);
+        int totalTokens = playerDB.getTokens();
+        Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
+
         if (numRows > 2){
             int newSize = numRows - 1;
             Intent intent = new Intent(SinglePlayerActivity.this, SinglePlayerActivity.class);
@@ -243,6 +269,10 @@ public class SinglePlayerActivity extends AppCompatActivity {
     }
 
     public void increaseSizeReset(View v){
+        playerDB.updateTokens(currentTokens);
+        int totalTokens = playerDB.getTokens();
+        Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
+
         if (numRows < 7){
             int newSize = numRows + 1;
             Intent intent = new Intent(SinglePlayerActivity.this, SinglePlayerActivity.class);
@@ -254,4 +284,10 @@ public class SinglePlayerActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        playerDB.updateTokens(currentTokens);
+        startActivity(new Intent(SinglePlayerActivity.this, MainActivity.class));
+
+    }
 }

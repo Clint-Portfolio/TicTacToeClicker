@@ -9,20 +9,22 @@ import android.widget.ListView;
 
 public class UpgradeActivity extends AppCompatActivity {
 
-    UpgradeDatabase db;
+    UpgradeDatabase upgradeDB;
+    PlayerDatabase playerDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upgrade);
 
-        db = UpgradeDatabase.getInstance(getApplicationContext());
+        upgradeDB = UpgradeDatabase.getInstance(getApplicationContext());
+        playerDB = PlayerDatabase.getInstance(getApplicationContext());
 
         updateData();
     }
 
     private void updateData() {
-        Cursor allEntries = db.selectAll();
+        Cursor allEntries = upgradeDB.selectAll();
         ListView lv = findViewById(R.id.upgradeListView);
         UpgradeAdapter upgradeAdapter = new UpgradeAdapter(getApplicationContext(), allEntries);
 
@@ -33,8 +35,14 @@ public class UpgradeActivity extends AppCompatActivity {
     private class OnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            db.updateUpgrade(l);
-            updateData();
+            int totalTokens = playerDB.getTokens();
+            int upgradeCost = upgradeDB.getUpgradeCost(l);
+
+            if (totalTokens >= upgradeCost) {
+                playerDB.updateTokens(-upgradeCost);
+                upgradeDB.updateUpgrade(l);
+                updateData();
+            }
         }
     }
 

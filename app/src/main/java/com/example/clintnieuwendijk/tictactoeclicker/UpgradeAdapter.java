@@ -17,13 +17,13 @@ public class UpgradeAdapter extends ResourceCursorAdapter {
     }
 
     public UpgradeEntry getItem(Cursor cursor) {
-        int id = cursor.getInt(cursor.getColumnIndex("upgrade_id"));
+        int id = cursor.getInt(cursor.getColumnIndex("_id"));
         String name = cursor.getString(cursor.getColumnIndex("name"));
         String description = cursor.getString(cursor.getColumnIndex("description"));
         int cost = cursor.getInt(cursor.getColumnIndex("cost"));
         int tier = cursor.getInt(cursor.getColumnIndex("unlocked"));
 
-        return new UpgradeEntry(id, name, description, cost, tier);
+        return new UpgradeEntry(id, cost, tier, name, description);
     }
 
     @Override
@@ -36,10 +36,13 @@ public class UpgradeAdapter extends ResourceCursorAdapter {
         upgradeName.setText(cursor.getString(cursor.getColumnIndex("name")));
         upgradeDescription.setText(cursor.getString(cursor.getColumnIndex("description")));
 
-        String upgradeCostFormat = String.format(Locale.US, "Cost: %d", cursor.getInt(cursor.getColumnIndex("cost")));
+        int tierLevel = cursor.getInt(cursor.getColumnIndex("unlocked"));
+        int upgradeCost = cursor.getInt(cursor.getColumnIndex("cost")) * tierLevel;
+
+        String upgradeCostFormat = String.format(Locale.US, "Cost: %d", upgradeCost);
         upgradeCostText.setText(upgradeCostFormat);
 
-        String upgradeTierFormat = String.format(Locale.US, "Tier: %d", cursor.getInt(cursor.getColumnIndex("unlocked")));
+        String upgradeTierFormat = String.format(Locale.US, "Tier: %d", tierLevel);
         upgradeTier.setText(upgradeTierFormat);
     }
 }
