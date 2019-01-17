@@ -156,7 +156,6 @@ public class SinglePlayerActivity extends AppCompatActivity {
     }
 
     public void onPlayerClick(View v){
-
         // if the gave is already over, do nothing
         if (Matrix.isGameOver()){
             Toast.makeText(SinglePlayerActivity.this, "Start a new game?", Toast.LENGTH_SHORT).show();
@@ -183,6 +182,10 @@ public class SinglePlayerActivity extends AppCompatActivity {
                         playerTurnView.setText("O wins!");
                         Toast.makeText(SinglePlayerActivity.this, "O is the winner!", Toast.LENGTH_SHORT).show();
                     }
+                }
+                if (Matrix.isDraw()) {
+                    playerTurnView.setText("It's a draw!");
+                    Toast.makeText(SinglePlayerActivity.this, "It's a draw!", Toast.LENGTH_SHORT).show();
                 }
             }
 
