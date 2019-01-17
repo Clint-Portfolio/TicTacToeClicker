@@ -18,8 +18,8 @@ public class UpgradeDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         this.db = db;
-        db.execSQL("CREATE TABLE 'upgrades' ('_id' integer PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' text, 'description' text, 'cost', integer, 'unlocked' integer, 'max_unlock' integer)");
-        db.execSQL("INSERT INTO 'upgrades' ('_id', 'name', 'description', 'cost', 'unlocked', 'max_unlock') VALUES (NULL, 'More tokens!', 'recieve more tokens per click (max tier: 5)', 10, 0, 5), (NULL, 'Larger board', 'Unlock a larger board (max size: 6x6)', 15, 0, 4)"); // An extra would be: , (NULL, 'AI', 'An AI to play against you (tiers: hard, medium, easy', 20, 0, 0")
+        db.execSQL("CREATE TABLE 'upgrades' ('_id' integer PRIMARY KEY AUTOINCREMENT NOT NULL, 'upgradeid' text, 'name' text, 'description' text, 'cost' integer, 'unlocked' integer, 'max_unlock' integer)");
+        db.execSQL("INSERT INTO 'upgrades' ('_id', 'upgradeid', 'name', 'description', 'cost', 'unlocked', 'max_unlock') VALUES (NULL, 'multiplier', 'More tokens!', 'recieve more tokens per click (max tier: 5)', 10, 1, 5), (NULL, 'boardsize', 'Larger board', 'Unlock a larger board (max size: 6x6)', 15, 2, 6)"); // An extra would be: , (NULL, 'AI', 'An AI to play against you (tiers: hard, medium, easy', 20, 0, 0")
     }
 
     public static UpgradeDatabase getInstance(Context context) {
@@ -81,4 +81,30 @@ public class UpgradeDatabase extends SQLiteOpenHelper {
         }
     }
 
+    public int getMultiplier() {
+        db = getWritableDatabase();
+        String sql = String.format("SELECT * FROM 'upgrades' WHERE upgradeid = 'multiplier'");
+        Cursor queryResponse = db.rawQuery(sql, null);
+
+        queryResponse.moveToFirst();
+        int multiplier = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
+        return multiplier;
+    }
+
+    public int getBoardSize() {
+        db = getWritableDatabase();
+        String sql = String.format("SELECT * FROM 'upgrades' WHERE upgradeid = 'boardsize'");
+        Cursor queryResponse = db.rawQuery(sql, null);
+
+        Log.d("Size =  ", Integer.toString(queryResponse.getCount()));
+        queryResponse.moveToFirst();
+        int boardSize = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
+        return boardSize;
+    }
+
+
+    public void resetProgress() {
+        db = getWritableDatabase();
+        db.execSQL("UPDATE 'upgrades' SET 'unlocked' = 0");
+    }
 }

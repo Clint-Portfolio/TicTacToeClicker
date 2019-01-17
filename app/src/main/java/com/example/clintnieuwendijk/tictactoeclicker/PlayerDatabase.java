@@ -29,7 +29,6 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         return instance;
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE 'entries'");
@@ -76,5 +75,10 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         String sql = String.format("UPDATE 'player' SET 'tokens' = %d", currentTokens);
         db.execSQL(sql);
         return currentTokens;
+    }
+
+    public void resetProgress(){
+        db = getWritableDatabase();
+        db.execSQL("UPDATE 'player' SET 'tokens' = 0");
     }
 }

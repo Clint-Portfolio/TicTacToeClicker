@@ -1,5 +1,6 @@
 package com.example.clintnieuwendijk.tictactoeclicker;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,6 +45,11 @@ public class UpgradeActivity extends AppCompatActivity {
                 updateData();
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(UpgradeActivity.this, MainActivity.class));
+
     }
 
 }

@@ -8,6 +8,7 @@ package com.example.clintnieuwendijk.tictactoeclicker;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -32,6 +33,9 @@ public class SinglePlayerActivity extends AppCompatActivity {
 
     int cellIndex;
 
+    int multiplier;
+    int maxSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,7 @@ public class SinglePlayerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int gridSize = intent.getIntExtra("gridSize", 3);
+        maxSize = intent.getIntExtra("maxSize", 2);
         numRows = gridSize;
         numCols = gridSize;
         buttons = new Button[numRows * numCols];
@@ -51,10 +56,12 @@ public class SinglePlayerActivity extends AppCompatActivity {
         }
 
         playerDB = PlayerDatabase.getInstance(getApplicationContext());
+        upgradeDB = UpgradeDatabase.getInstance(getApplicationContext());
 
         scoreView = findViewById(R.id.ScoreView);
         currentTokens = 0;
-
+        multiplier = upgradeDB.getMultiplier();
+        Log.d("Multiplier = ", Integer.toString(multiplier));
         updateScore(currentTokens);
     }
 
@@ -67,6 +74,8 @@ public class SinglePlayerActivity extends AppCompatActivity {
      * initialise the game
      */
     private void initGame(){
+        currentTokens = 0;
+        updateScore(currentTokens);
         //if the board doesn't exist, create a new one
         if (Matrix == null){
             Matrix = new TicTacToeGame(numRows, numCols);
@@ -85,7 +94,6 @@ public class SinglePlayerActivity extends AppCompatActivity {
         setWhoIsPlayingTextView();
         //game is not over
         Matrix.setIsGameOver(false);
-        Toast.makeText(SinglePlayerActivity.this, "Game is resetti", Toast.LENGTH_SHORT).show();
     }
 
     private void restoreGame(TicTacToeGame tttGame) {
@@ -165,12 +173,13 @@ public class SinglePlayerActivity extends AppCompatActivity {
             // Now let's check whether there is a winner
             if (isUpdated){
                 int whoIsWinning = checkWinner();
-                if (whoIsWinning == TicTacToeGame.cross){
+                if (whoIsWinning == TicTacToeGame.cross) {
                     playerTurnView.setText("X wins!");
                     Toast.makeText(SinglePlayerActivity.this, "X is the winner!", Toast.LENGTH_SHORT).show();
 
-                }else{
-                    if (whoIsWinning == TicTacToeGame.circle){
+                }
+                else {
+                    if (whoIsWinning == TicTacToeGame.circle) {
                         playerTurnView.setText("O wins!");
                         Toast.makeText(SinglePlayerActivity.this, "O is the winner!", Toast.LENGTH_SHORT).show();
                     }
@@ -202,13 +211,14 @@ public class SinglePlayerActivity extends AppCompatActivity {
             if (whoIsPlaying() == TicTacToeGame.cross) {
                 textResId = "X";
                 Matrix.setWhoIsPlaying(TicTacToeGame.circle); // next player
-            }else{
+                currentTokens += multiplier;
+                updateScore(currentTokens);
+            }
+            else {
                 textResId = "O";
                 Matrix.setWhoIsPlaying(TicTacToeGame.cross);
             }
             buttons[index].setText(textResId);
-            currentTokens += 1;
-            updateScore(currentTokens);
         }
         return isUpdated;
     }
@@ -245,22 +255,23 @@ public class SinglePlayerActivity extends AppCompatActivity {
      * Initialize the grid of buttons when the user clicks in the button StartOver
      * @param v
      */
-    public void onStartOverClick(View v){
+    public void onStartOverClick(View v) {
         playerDB.updateTokens(currentTokens);
         int totalTokens = playerDB.getTokens();
         Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
         initGame();
     }
 
-    public void decreaseSizeReset(View v){
+    public void decreaseSizeReset(View v) {
         playerDB.updateTokens(currentTokens);
         int totalTokens = playerDB.getTokens();
         Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
 
-        if (numRows > 2){
+        if (numRows > 2) {
             int newSize = numRows - 1;
             Intent intent = new Intent(SinglePlayerActivity.this, SinglePlayerActivity.class);
             intent.putExtra("gridSize", newSize);
+            intent.putExtra("maxSize", maxSize);
             startActivity(intent);
         }
         else{
@@ -273,10 +284,11 @@ public class SinglePlayerActivity extends AppCompatActivity {
         int totalTokens = playerDB.getTokens();
         Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
 
-        if (numRows < 7){
+        if (numRows < maxSize){
             int newSize = numRows + 1;
             Intent intent = new Intent(SinglePlayerActivity.this, SinglePlayerActivity.class);
             intent.putExtra("gridSize", newSize);
+            intent.putExtra("maxSize", maxSize);
             startActivity(intent);
         }
         else{
