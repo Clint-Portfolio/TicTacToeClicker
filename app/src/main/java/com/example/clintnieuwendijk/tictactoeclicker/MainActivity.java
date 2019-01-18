@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("maxSize", maxSize);
                 break;
             case R.id.multiplayerStartButton:
-                intent = new Intent(MainActivity.this, MultiplayerActivity.class);
+                intent = new Intent(MainActivity.this, MultiplayerStartGameActivity.class);
                 break;
             case R.id.optionsButton:
                 intent = new Intent(MainActivity.this, OptionsActivity.class);
