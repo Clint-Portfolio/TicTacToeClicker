@@ -8,16 +8,14 @@
     android:orientation="vertical"
     tools:context=".MultiplayerStartGameActivity">
 
-    <SeekBar
-        android:id="@+id/seekBar3"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="match_parent"
+    <Spinner
+        android:id="@+id/boardSizeSpinner"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:max="10"
-        android:progress="3" />
+        android:textAlignment="center" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/lookForGameButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onRequestGameClick"

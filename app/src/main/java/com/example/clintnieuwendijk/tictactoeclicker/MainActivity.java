@@ -29,16 +29,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void mainClick(View view){
         Intent intent;
+        int maxSize;
         switch (view.getId()){
             case R.id.singlePlayerStartButton:
                 intent = new Intent(MainActivity.this, SinglePlayerActivity.class);
                 intent.putExtra("gridSize", 2);
 
-                int maxSize = upgradeDB.getBoardSize();
+                maxSize = upgradeDB.getBoardSize();
                 intent.putExtra("maxSize", maxSize);
                 break;
             case R.id.multiplayerStartButton:
                 intent = new Intent(MainActivity.this, MultiplayerStartGameActivity.class);
+                maxSize = upgradeDB.getBoardSize();
+                intent.putExtra("maxSize", maxSize);
                 break;
             case R.id.optionsButton:
                 intent = new Intent(MainActivity.this, OptionsActivity.class);
