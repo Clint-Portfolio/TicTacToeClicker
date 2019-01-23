@@ -1,6 +1,7 @@
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,6 +29,7 @@ public class GameRequest implements Response.Listener<JSONObject>, Response.Erro
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        Log.d("error", error.toString());
         activity.gotGameError(error.getMessage());
     }
 
@@ -42,9 +44,18 @@ public class GameRequest implements Response.Listener<JSONObject>, Response.Erro
 
     void requestGame(Callback activity, int boardSize) {
         this.activity = activity;
+        int playerID = 4;
         RequestQueue queue = Volley.newRequestQueue(context);
-        String requestURL = "https://ide50.manhut.c9users.io:8080/ClickTacToeGameRequest?boardSize=" + Integer.toString(boardSize);
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, null, this, this);
+        String requestURL = "http://ide50.manhut.c9users.io:8080/ClickTacToeGameRequest";
+        JSONObject postJSON = new JSONObject();
+        try {
+            postJSON.put("boardSize", boardSize);
+            postJSON.put("playerID", playerID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d(requestURL, postJSON.toString());
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
         queue.add(jsonRequest);
     }
 }

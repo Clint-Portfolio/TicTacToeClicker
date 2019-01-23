@@ -26,7 +26,7 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
         for (int i = 2; i < getIntent().getIntExtra("maxSize", 3); i++) {
             items.add(i);
         }
-        ArrayAdapter spinnerList = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, items);
+        ArrayAdapter spinnerList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         spinner.setAdapter(spinnerList);
     }
 

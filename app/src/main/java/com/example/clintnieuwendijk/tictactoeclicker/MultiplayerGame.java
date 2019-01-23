@@ -14,6 +14,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
 public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Callback {
 
     private TicTacToeGame Matrix;
@@ -34,6 +37,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
     int gameID;
     String playerSymbol;
     private int currentTokens;
+    boolean thisPlayerMove;
 
 
     @Override
@@ -43,6 +47,8 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
 
         Intent intent = getIntent();
         playerSymbol = intent.getStringExtra("playerSymbol");
+        thisPlayerMove = (playerSymbol.equals("X"));
+
         gameID = intent.getIntExtra("gameID", 0);
         int gridSize = intent.getIntExtra("gridSize", 3);
 
@@ -164,36 +170,51 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             return;
         }
 
-        // find the index of the button to update
-        int id = getClickedButtonIndex(v);
+        if (thisPlayerMove) {
+            // find the index of the button to update
+            int id = getClickedButtonIndex(v);
 
-        // Update text and check whether there is a winner
-        if (id >=0) {
-            boolean isUpdated = updateCell(id);
-
-            // Now let's check whether there is a winner
-            if (isUpdated){
-                int whoIsWinning = checkWinner();
-                if (whoIsWinning == TicTacToeGame.cross) {
-                    playerTurnView.setText("X wins!");
-                    Toast.makeText(this, "X is the winner!", Toast.LENGTH_SHORT).show();
-
-                }
-                else {
-                    if (whoIsWinning == TicTacToeGame.circle) {
-                        playerTurnView.setText("O wins!");
-                        Toast.makeText(this, "O is the winner!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                if (Matrix.isDraw()) {
-                    playerTurnView.setText("It's a draw!");
-                    Toast.makeText(this, "It's a draw!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            if (!Matrix.isGameOver())
-                setWhoIsPlayingTextView();
+            // Update text and check whether there is a winner
+            updateCell(id);
         }
+        else {
+            for (int i = 0; i < 60; i ++){
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+
+//                  TODO: Quit game statement
+
+                }
+
+                MoveRequest x = new MoveRequest(this);
+                x.postMove(this, -1, -1, gameID);
+            }
+        }
+
+        // Now let's check whether there is a winner
+        int whoIsWinning = checkWinner();
+        if (whoIsWinning == TicTacToeGame.cross) {
+            playerTurnView.setText("X wins!");
+            Toast.makeText(this, "X is the winner!", Toast.LENGTH_SHORT).show();
+
+        }
+        else {
+            if (whoIsWinning == TicTacToeGame.circle) {
+                playerTurnView.setText("O wins!");
+                Toast.makeText(this, "O is the winner!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (Matrix.isDraw()) {
+            playerTurnView.setText("It's a draw!");
+            Toast.makeText(this, "It's a draw!", Toast.LENGTH_SHORT).show();
+        }
+
+
+        if (!Matrix.isGameOver())
+            setWhoIsPlayingTextView();
+
     }
 
     public int getClickedButtonIndex(View v) {
@@ -201,11 +222,14 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         return Integer.parseInt(v.getTag().toString());
     }
 
-    public boolean updateCell(int index){
+    public boolean updateCell(int index) {
 
-        boolean isUpdated = false;
+        boolean isUpdated;
         int i = (int)(index / numCols);  // row index
         int j = index % numRows;         // column index
+
+        MoveRequest x = new MoveRequest(this);
+        x.postMove(this, i, j, gameID);
 
         isUpdated = Matrix.setCell(i, j);
 
@@ -276,14 +300,16 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
 
     @Override
     public void gotMove(JSONObject response) throws JSONException {
-        if (response.getString("playerSymbol") == playerSymbol) {
+        if (response.getString("playerSymbol").equals(playerSymbol)) {
             int id = response.getInt("squareID");
             updateCell(id);
+            thisPlayerMove = true;
         }
+        thisPlayerMove = (playerSymbol.equals("X"));
     }
 
     @Override
     public void gotMoveError(String message) {
-
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

@@ -31,21 +31,39 @@ public class MoveRequest implements Response.Listener<JSONObject>, Response.Erro
 
     @Override
     public void onResponse(JSONObject response) {
-        activity.gotMove(response);
+        try {
+            activity.gotMove(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void postMove(Callback activity, int rowPlayed, int columnPlayed, int gameID) throws JSONException {
+    public void postMove(Callback activity, int rowPlayed, int columnPlayed, int gameID) {
         this.activity = activity;
 
         JSONObject postJSON = new JSONObject();
-        postJSON.put("gameID", gameID);
-        postJSON.put("rowPlayed", rowPlayed);
-        postJSON.put("columnPlayed", columnPlayed);
+
+        if (rowPlayed != -1) {
+            try {
+                postJSON.put("gameID", gameID);
+                postJSON.put("rowPlayed", rowPlayed);
+                postJSON.put("columnPlayed", columnPlayed);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
         String requestURL = "https://ide50.manhut.c9users.io:8080/ClickTacToeMoveHandler";
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
+        JsonObjectRequest jsonRequest;
+        if (rowPlayed != -1) {
+            jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
+        }
+        else {
+            jsonRequest = new JsonObjectRequest(requestURL, null, this, this);
+        }
         queue.add(jsonRequest);
     }
 }
