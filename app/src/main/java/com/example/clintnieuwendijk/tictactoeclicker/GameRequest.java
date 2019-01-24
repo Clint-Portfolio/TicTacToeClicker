@@ -42,7 +42,7 @@ public class GameRequest implements Response.Listener<JSONObject>, Response.Erro
         }
     }
 
-    void requestGame(Callback activity, int boardSize) {
+    void requestGame(Callback activity, int boardSize, String status) {
         this.activity = activity;
         int playerID = 4;
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -51,10 +51,10 @@ public class GameRequest implements Response.Listener<JSONObject>, Response.Erro
         try {
             postJSON.put("boardSize", boardSize);
             postJSON.put("playerID", playerID);
+            postJSON.put("status", status);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(requestURL, postJSON.toString());
         JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
         queue.add(jsonRequest);
     }
