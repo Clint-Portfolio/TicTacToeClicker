@@ -3,7 +3,6 @@ package com.example.clintnieuwendijk.tictactoeclicker;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,9 +21,8 @@ public class MainActivity extends AppCompatActivity {
         playerDB.makePlayer(this);
 
         TextView scoreView = findViewById(R.id.ScoreView);
-        scoreView.setText(String.format("Score: %d", playerDB.getTokens()));
+        scoreView.setText(String.format("You have: %d Ticcoin", playerDB.getTokens()));
 
-        Log.d("Call to", "Oncreate");
     }
 
     public void mainClick(View view){

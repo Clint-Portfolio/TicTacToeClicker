@@ -39,7 +39,7 @@ public class UpgradeAdapter extends ResourceCursorAdapter {
         int tierLevel = cursor.getInt(cursor.getColumnIndex("unlocked"));
         int upgradeCost = cursor.getInt(cursor.getColumnIndex("cost")) * tierLevel;
 
-        String upgradeCostFormat = String.format(Locale.US, "Cost: %d", upgradeCost);
+        String upgradeCostFormat = String.format(Locale.US, "Cost: %d Ticcoin", upgradeCost);
         upgradeCostText.setText(upgradeCostFormat);
 
         String upgradeTierFormat = String.format(Locale.US, "Tier: %d", tierLevel);
