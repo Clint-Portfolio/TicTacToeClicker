@@ -38,32 +38,21 @@ public class MoveRequest implements Response.Listener<JSONObject>, Response.Erro
         }
     }
 
-    public void postMove(Callback activity, int rowPlayed, int columnPlayed, int gameID) {
+    public void postMove(Callback activity, int movePlayed, int gameID) {
         this.activity = activity;
 
         JSONObject postJSON = new JSONObject();
-
-        if (rowPlayed != -1) {
             try {
                 postJSON.put("gameID", gameID);
-                postJSON.put("rowPlayed", rowPlayed);
-                postJSON.put("columnPlayed", columnPlayed);
+                postJSON.put("lastMove", movePlayed);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return;
             }
-        }
-
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        String requestURL = "https://ide50.manhut.c9users.io:8080/ClickTacToeMoveHandler";
-        JsonObjectRequest jsonRequest;
-        if (rowPlayed != -1) {
-            jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
-        }
-        else {
-            jsonRequest = new JsonObjectRequest(requestURL, null, this, this);
-        }
+        String requestURL = "http://ide50.manhut.c9users.io:8080/ClickTacToeMoveHandler";
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
         queue.add(jsonRequest);
     }
 }

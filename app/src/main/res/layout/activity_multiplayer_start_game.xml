@@ -9,7 +9,7 @@
     tools:context=".MultiplayerStartGameActivity">
 
     <Spinner
-        android:id="@+id/boardSizeSpinner"
+        android:id="@+id/gridSizeSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center" />

@@ -42,14 +42,14 @@ public class GameRequest implements Response.Listener<JSONObject>, Response.Erro
         }
     }
 
-    void requestGame(Callback activity, int boardSize, String status) {
+    void requestGame(Callback activity, int gridSize, String playerID, String status) {
         this.activity = activity;
-        int playerID = 4;
+
         RequestQueue queue = Volley.newRequestQueue(context);
         String requestURL = "http://ide50.manhut.c9users.io:8080/ClickTacToeGameRequest";
         JSONObject postJSON = new JSONObject();
         try {
-            postJSON.put("boardSize", boardSize);
+            postJSON.put("gridSize", gridSize);
             postJSON.put("playerID", playerID);
             postJSON.put("status", status);
         } catch (JSONException e) {

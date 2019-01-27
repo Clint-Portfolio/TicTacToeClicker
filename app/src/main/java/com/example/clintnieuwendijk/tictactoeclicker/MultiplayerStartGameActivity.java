@@ -1,6 +1,7 @@
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,38 +20,42 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
 
     Spinner spinner;
     int lookRequestsMade;
-    int boardSize;
+    int gridSize;
+    String playerID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiplayer_start_game);
-        spinner = findViewById(R.id.boardSizeSpinner);
+        spinner = findViewById(R.id.gridSizeSpinner);
         ArrayList<Integer> items = new ArrayList<>();
         for (int i = 2; i < getIntent().getIntExtra("maxSize", 3); i++) {
             items.add(i);
         }
         ArrayAdapter spinnerList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         spinner.setAdapter(spinnerList);
+        playerID = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                   Settings.Secure.ANDROID_ID);
+        Log.d("deviceId", playerID);
     }
 
     public void onRequestGameClick(View v) {
 
-        boardSize = Integer.valueOf(spinner.getSelectedItem().toString());
-        gameRequester(boardSize, 4);
+        gridSize = Integer.valueOf(spinner.getSelectedItem().toString());
+        gameRequester(gridSize, playerID, "looking_for_game");
     }
 
-    public void gameRequester(int boardSize, int playerID){
+    public void gameRequester(int gridSize, String playerID, String status){
         Log.d("lookrequestsmade", Integer.toString(lookRequestsMade));
         GameRequest gameRequest = new GameRequest(this);
         if (lookRequestsMade >= 0 && lookRequestsMade < 10) {
-            gameRequest.requestGame(this, boardSize, "looking_for_game");
+            gameRequest.requestGame(this, gridSize, playerID, status);
             try {
                 TimeUnit.SECONDS.sleep(5);
                 lookRequestsMade++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                gameRequest.requestGame(this, boardSize, "cancel");
+                gameRequest.requestGame(this, gridSize, playerID, "cancel");
             }
         }
     }
@@ -58,19 +63,20 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
     @Override
     public void gotGame(JSONObject response) throws JSONException {
         int gameID = response.getInt("gameID");
+        Log.d("gameID", Integer.toString(gameID));
         if (gameID > 0) {
-            int gridSize = response.getInt("boardSize");
-            String startingPlayer = response.getString("StartingPlayer");
+            gridSize = response.getInt("gridSize");
+            String startingPlayer = response.getString("startingPlayer");
 
             Intent intent = new Intent(MultiplayerStartGameActivity.this, MultiplayerGame.class);
             intent.putExtra("gameID", gameID);
             intent.putExtra("gridSize", gridSize);
-            intent.putExtra("playerSymbol", startingPlayer);
+            intent.putExtra("startingPlayer", startingPlayer);
             startActivity(intent);
         }
-        else if (lookRequestsMade < 11) {
+        else if (lookRequestsMade < 3) {
             Toast.makeText(this, "Still looking for game", Toast.LENGTH_SHORT).show();
-            gameRequester(boardSize, 4);
+            gameRequester(gridSize, playerID, "waiting_for_game");
         }
         else {
             Toast.makeText(this, "No multiplayer games found, try again later.", Toast.LENGTH_LONG).show();
