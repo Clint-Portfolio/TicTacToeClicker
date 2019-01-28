@@ -15,7 +15,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Callback {
@@ -35,9 +34,10 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
     int multiplier;
 
     int gameID;
+    int requestsMade;
     private int currentTokens;
-    String thisPlayer;
-    boolean thisPlayerMove;
+    int thisPlayer;
+    int thisPlayerMove;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +49,6 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
                                 Settings.Secure.ANDROID_ID);
         Log.d("androidID = ", startingPlayer);
         Log.d("Starting player = ", intent.getStringExtra("startingPlayer"));
-        if (startingPlayer.equals(intent.getStringExtra("startingPlayer"))) {
-            thisPlayer = "player1";
-            thisPlayerMove = true;
-        }
-        else {
-            thisPlayer = "player2";
-            thisPlayerMove = false;
-        }
 
         gameID = intent.getIntExtra("gameID", 0);
         int gridSize = intent.getIntExtra("gridSize", 3);
@@ -78,8 +70,19 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         scoreView = findViewById(R.id.ScoreView);
         currentTokens = 0;
         multiplier = upgradeDB.getMultiplier();
-        Log.d("Multiplier = ", Integer.toString(multiplier));
         updateScore(currentTokens);
+
+        if (startingPlayer.equals(intent.getStringExtra("startingPlayer"))) {
+            thisPlayer = TicTacToeGame.cross;
+            thisPlayerMove = TicTacToeGame.cross;
+        }
+        else {
+            thisPlayer = TicTacToeGame.circle;
+            thisPlayerMove = TicTacToeGame.circle;
+            MoveRequest mr = new MoveRequest(this);
+            mr.postMove(this, -1, gameID);
+        }
+        setWhoIsPlayingTextView();
     }
 
     public void updateScore(int score) {
@@ -179,13 +182,14 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             return;
         }
         MoveRequest mr = new MoveRequest(this);
-        if (thisPlayerMove) {
+        if (thisPlayerMove == Matrix.whoIsPlaying()) {
             int id = getClickedButtonIndex(v);
             mr.postMove(this, id, gameID);
         }
         else {
             mr.postMove(this, -1, gameID);
         }
+        setWhoIsPlayingTextView();
     }
 
     public int getClickedButtonIndex(View v) {
@@ -209,8 +213,6 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             if (whoIsPlaying() == TicTacToeGame.cross) {
                 textResId = "X";
                 Matrix.setWhoIsPlaying(TicTacToeGame.circle); // next player
-                currentTokens += multiplier;
-                updateScore(currentTokens);
             }
             else {
                 textResId = "O";
@@ -218,6 +220,8 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             }
             buttons[index].setText(textResId);
         }
+        currentTokens += multiplier;
+        updateScore(currentTokens);
         return isUpdated;
     }
 
@@ -243,7 +247,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
      */
     protected void setWhoIsPlayingTextView(){
 
-        if (thisPlayerMove) {
+        if (thisPlayerMove == Matrix.whoIsPlaying()) {
             playerTurnView.setText("It's your turn to play!");
         }
         else {
@@ -273,12 +277,6 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
     public void gotMove(JSONObject response) throws JSONException {
         int index = response.getInt("lastMove");
         String status = response.getString("status");
-        if (status.equals(thisPlayer)) {
-            thisPlayerMove = true;
-        }
-        else {
-            thisPlayerMove = false;
-        }
 
         // Update text and check whether there is a winner
         if (index >= 0) {
@@ -302,14 +300,55 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
                     Toast.makeText(MultiplayerGame.this, "It's a draw!", Toast.LENGTH_SHORT).show();
                 }
             }
-            if (!Matrix.isGameOver())
-                setWhoIsPlayingTextView();
+            setWhoIsPlayingTextView();
+
+            if (Matrix.isGameOver()) {
+                finishGameRequest();
+            }
+        }
+        requestsMade = 0;
+        if (Matrix.isGameOver() && status.equals("finished")) {
+            finishGameRequest();
+            Intent intent = new Intent(MultiplayerGame.this, MainActivity.class);
+            startActivity(intent);
+        }
+        if (thisPlayerMove != Matrix.whoIsPlaying() && !Matrix.isGameOver()) {
+            if (requestsMade < 36) {
+                MoveRequest mr = new MoveRequest(this);
+                mr.postMove(this, -1, gameID);
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                requestsMade++;
+            }
+            else if (requestsMade > 35 && !Matrix.isGameOver()) {
+                Toast.makeText(this, "Player timeout! You win!", Toast.LENGTH_LONG).show();
+                initGame();
+                for (int i = 0; i < numCols * numRows; i++) {
+                    updateCell(i);
+                    try {
+                        TimeUnit.MICROSECONDS.sleep(333);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                finishGameRequest();
+            }
+
         }
     }
 
     @Override
     public void gotMoveError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void finishGameRequest(){
+        MoveRequest mr = new MoveRequest(this);
+        mr.cancelRequests();
+        mr.postMove(this, -2, gameID);
     }
 
     public void onRequestMove(View v) {

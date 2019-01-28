@@ -36,7 +36,6 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
         spinner.setAdapter(spinnerList);
         playerID = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                    Settings.Secure.ANDROID_ID);
-        Log.d("deviceId", playerID);
     }
 
     public void onRequestGameClick(View v) {
@@ -48,15 +47,12 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
     public void gameRequester(int gridSize, String playerID, String status){
         Log.d("lookrequestsmade", Integer.toString(lookRequestsMade));
         GameRequest gameRequest = new GameRequest(this);
-        if (lookRequestsMade >= 0 && lookRequestsMade < 5) {
-            gameRequest.requestGame(this, gridSize, playerID, status);
-            try {
-                TimeUnit.SECONDS.sleep(5);
-                lookRequestsMade++;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                gameRequest.requestGame(this, gridSize, playerID, "cancel");
-            }
+        gameRequest.requestGame(this, gridSize, playerID, status);
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            gameRequest.requestGame(this, gridSize, playerID, "cancel");
         }
     }
 
@@ -74,9 +70,10 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
             intent.putExtra("startingPlayer", startingPlayer);
             startActivity(intent);
         }
-        else if (lookRequestsMade < 3) {
+        else if (lookRequestsMade < 10) {
             Toast.makeText(this, "Still looking for game", Toast.LENGTH_SHORT).show();
             gameRequester(gridSize, playerID, "waiting_for_game");
+            lookRequestsMade++;
         }
         else {
             Toast.makeText(this, "No multiplayer games found, try again later.", Toast.LENGTH_LONG).show();

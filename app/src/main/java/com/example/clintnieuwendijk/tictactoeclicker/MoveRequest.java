@@ -53,6 +53,12 @@ public class MoveRequest implements Response.Listener<JSONObject>, Response.Erro
 
         String requestURL = "http://ide50.manhut.c9users.io:8080/ClickTacToeMoveHandler";
         JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
+        jsonRequest.setTag("moveRequest");
         queue.add(jsonRequest);
+    }
+
+    public void cancelRequests(){
+        RequestQueue queue = Volley.newRequestQueue(context);
+        queue.cancelAll("moveRequest");
     }
 }
