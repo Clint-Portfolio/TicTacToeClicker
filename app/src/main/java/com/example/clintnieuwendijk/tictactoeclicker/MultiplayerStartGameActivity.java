@@ -48,7 +48,7 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
     public void gameRequester(int gridSize, String playerID, String status){
         Log.d("lookrequestsmade", Integer.toString(lookRequestsMade));
         GameRequest gameRequest = new GameRequest(this);
-        if (lookRequestsMade >= 0 && lookRequestsMade < 10) {
+        if (lookRequestsMade >= 0 && lookRequestsMade < 5) {
             gameRequest.requestGame(this, gridSize, playerID, status);
             try {
                 TimeUnit.SECONDS.sleep(5);

@@ -3,7 +3,6 @@ package com.example.clintnieuwendijk.tictactoeclicker;
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -46,7 +45,7 @@ public class GameRequest implements Response.Listener<JSONObject>, Response.Erro
         this.activity = activity;
 
         RequestQueue queue = Volley.newRequestQueue(context);
-        String requestURL = "http://ide50.manhut.c9users.io:8080/ClickTacToeGameRequest";
+        String requestURL = "http://ide50-manhut.c9users.io:8080/ClickTacToeGameRequest";
         JSONObject postJSON = new JSONObject();
         try {
             postJSON.put("gridSize", gridSize);

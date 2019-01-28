@@ -38,5 +38,12 @@
         android:text="TextView"
         android:textAlignment="center" />
 
+    <Button
+        android:id="@+id/requestMove"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onRequestMove"
+        android:text="Request move Button " />
+
 
 </LinearLayout>

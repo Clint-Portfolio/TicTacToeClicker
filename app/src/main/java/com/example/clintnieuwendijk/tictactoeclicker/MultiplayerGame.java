@@ -47,6 +47,8 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         Intent intent = getIntent();
         String startingPlayer = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                                 Settings.Secure.ANDROID_ID);
+        Log.d("androidID = ", startingPlayer);
+        Log.d("Starting player = ", intent.getStringExtra("startingPlayer"));
         if (startingPlayer.equals(intent.getStringExtra("startingPlayer"))) {
             thisPlayer = "player1";
             thisPlayerMove = true;
@@ -176,10 +178,14 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             Toast.makeText(this, "Start a new game?", Toast.LENGTH_SHORT).show();
             return;
         }
-        int id = getClickedButtonIndex(v);
         MoveRequest mr = new MoveRequest(this);
-        mr.postMove(this, id, gameID);
-
+        if (thisPlayerMove) {
+            int id = getClickedButtonIndex(v);
+            mr.postMove(this, id, gameID);
+        }
+        else {
+            mr.postMove(this, -1, gameID);
+        }
     }
 
     public int getClickedButtonIndex(View v) {
@@ -237,10 +243,12 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
      */
     protected void setWhoIsPlayingTextView(){
 
-        if (whoIsPlaying() == TicTacToeGame.cross)
+        if (thisPlayerMove) {
             playerTurnView.setText("It's your turn to play!");
-        else
+        }
+        else {
             playerTurnView.setText("It's your opponent's turn to play");
+        }
     }
 
     /**
@@ -302,5 +310,10 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
     @Override
     public void gotMoveError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void onRequestMove(View v) {
+        MoveRequest mr = new MoveRequest(this);
+        mr.postMove(this, -1, gameID);
     }
 }
