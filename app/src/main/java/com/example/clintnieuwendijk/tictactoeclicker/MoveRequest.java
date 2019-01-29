@@ -2,6 +2,7 @@ package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Context;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -14,9 +15,11 @@ import org.json.JSONObject;
 public class MoveRequest implements Response.Listener<JSONObject>, Response.ErrorListener {
     Context context;
     MoveRequest.Callback activity;
+    private RequestQueue queue;
 
     public MoveRequest(Context context) {
         this.context = context;
+        queue = Volley.newRequestQueue(context);
     }
 
     public interface Callback {
@@ -49,16 +52,20 @@ public class MoveRequest implements Response.Listener<JSONObject>, Response.Erro
                 e.printStackTrace();
                 return;
             }
-        RequestQueue queue = Volley.newRequestQueue(context);
 
         String requestURL = "http://ide50.manhut.c9users.io:8080/ClickTacToeMoveHandler";
         JsonObjectRequest jsonRequest = new JsonObjectRequest(requestURL, postJSON, this, this);
-        jsonRequest.setTag("moveRequest");
+//        jsonRequest.setTag("moveRequest");
         queue.add(jsonRequest);
     }
 
     public void cancelRequests(){
-        RequestQueue queue = Volley.newRequestQueue(context);
-        queue.cancelAll("moveRequest");
+//        queue.cancelAll("moveRequest");
+        queue.cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return true;
+            }
+        });
     }
 }
