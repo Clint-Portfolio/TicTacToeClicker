@@ -1,3 +1,8 @@
+/*
+ * The ClickTacToe multiplayer game by Clint Nieuwendijk
+ * Based on the dynamic Tic Tac Toe grid by Taaqif Peck (https://github.com/Taaqif/TicTacToe-Android)
+ * The Multiplayer Tic Tac Toe handles calls to the REST server in addition to the single player game
+ */
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Intent;
@@ -35,7 +40,6 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
 
     int gameID;
     private int currentTokens;
-    int thisPlayer;
     int thisPlayerMove;
     int requestsMade = 0;
     MoveRequest mr;
@@ -74,18 +78,18 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         updateScore(currentTokens);
         mr = new MoveRequest(this);
 
+        // check if player is 'X' or 'O'
         if (startingPlayer.equals(intent.getStringExtra("startingPlayer"))) {
-            thisPlayer = TicTacToeGame.cross;
             thisPlayerMove = TicTacToeGame.cross;
         }
         else {
-            thisPlayer = TicTacToeGame.circle;
             thisPlayerMove = TicTacToeGame.circle;
             mr.postMove(this, -1, gameID);
         }
         setWhoIsPlayingTextView();
     }
 
+    // update score view
     public void updateScore(int score) {
         scoreView = (TextView) findViewById(R.id.scoreView);
         scoreView.setText(String.format("Score: %d", score));
@@ -183,6 +187,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             return;
         }
         if (thisPlayerMove == Matrix.whoIsPlaying()) {
+            requestsMade = 0;
             int id = getClickedButtonIndex(v);
             mr.postMove(this, id, gameID);
         }
@@ -196,10 +201,11 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         return Integer.parseInt(v.getTag().toString());
     }
 
+    // update cell from index number
     public boolean updateCell(int index) {
 
         boolean isUpdated;
-        int i = (int)(index / numCols);  // row index
+        int i = (int) (index / numCols);  // row index
         int j = index % numRows;         // column index
 
         boolean isBlank = (Matrix.getState(i, j) == 0);
@@ -271,12 +277,13 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         startActivity(intent);
     }
 
+    // clear request queue and send a 'cancel' request to the server
     private void cancelGameRequest() {
         mr.cancelRequests();
         mr.postMove(this, -3, gameID);
     }
 
-
+    // go back to main menu if back is pressed
     @Override
     public void onBackPressed() {
         playerDB.updateTokens(currentTokens);
@@ -285,6 +292,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
 
     }
 
+    // handle move responses
     @Override
     public void gotMove(JSONObject response) throws JSONException {
         int index = response.getInt("lastMove");
@@ -300,6 +308,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             }
         }
 
+        // request new moves if it's the opponents' turn
         if (!status.equals("finished")) {
             Log.d("requests made", Integer.toString(requestsMade));
             if (thisPlayerMove != Matrix.whoIsPlaying() && !Matrix.isGameOver()) {
@@ -327,16 +336,13 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             }
 
         }
-        else if (status.equals("finished")) {
-
-        }
         else if (status.equals("canceled")) {
             playerTurnView.setText("Opponent chickened out!");
             initGame();
             for (int i = 0; i < numCols * numRows; i++) {
                 updateCell(i);
                 try {
-                    TimeUnit.MILLISECONDS.sleep(1024);
+                    TimeUnit.MILLISECONDS.sleep(64);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -351,11 +357,13 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         mr.cancelRequests();
     }
 
+    // let server know the game is finished
     public void finishGameRequest(){
         mr.cancelRequests();
         mr.postMove(this, -2, gameID);
     }
 
+    // set the text to match the winner of the game
     public void setWinnerText(){
         int whoIsWinning = checkWinner();
         if (whoIsWinning == TicTacToeGame.cross) {
@@ -373,6 +381,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
         }
     }
 
+    // if app stops or is destroyed, cancel all requests, cancel game
     @Override
     public void onStop() {
         super.onStop();

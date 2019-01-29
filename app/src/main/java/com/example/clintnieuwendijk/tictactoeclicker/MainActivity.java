@@ -1,3 +1,13 @@
+/*
+ * The main menu of "ClickTacToe" by Clint Nieuwendijk
+ * The menu presents 4 options:
+ * - Simgle player, to play a single player game
+ * - Multiplayer, for multiplayer games
+ * - Options, to reset progress
+ * - Upgrades, the upgrade menu
+ *
+ * The main menu also functions as db initializer for the player- and upgrade database
+ */
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Intent;
@@ -25,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // go to menu item
     public void mainClick(View view){
         Intent intent;
         int maxSize;

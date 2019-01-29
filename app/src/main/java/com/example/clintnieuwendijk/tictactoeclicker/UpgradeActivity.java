@@ -1,3 +1,9 @@
+/*
+ * The upgrade menu for ClickTacToe by Clint Nieuwendijk
+ * The menu is a scrollable ListView with an adapter
+ * The class handles database interactions for 'buying' upgrades for the game
+ * So far only 2 upgrades exist: more tokens per click, and larger grid sizes
+ */
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Intent;

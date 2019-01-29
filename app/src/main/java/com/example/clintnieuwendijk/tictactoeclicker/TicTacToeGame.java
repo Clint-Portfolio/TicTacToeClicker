@@ -1,21 +1,24 @@
-package com.example.clintnieuwendijk.tictactoeclicker;
-
-/**
+/*
+ * TicTacToe grid class
  * Code based on TicTacToeGrid by Taaqif Peck
  * https://github.com/Taaqif/TicTacToe-Android
+ * The class works with the TicTacToeMatrix to fill in the grid in single player and multiplayer
  */
+
+package com.example.clintnieuwendijk.tictactoeclicker;
+
 
 import java.io.Serializable;
 
 public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
-    public static final int cross = 1;
-    public static final int circle = -1;
+    static final int cross = 1;
+    static final int circle = -1;
 
     private boolean mIsGameOver = false;
 
     private int mWhoIsPlaying = cross;
 
-    public TicTacToeGame(int rows, int cols) {
+    TicTacToeGame(int rows, int cols) {
         super(rows, cols);
     }
 
@@ -26,7 +29,7 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * @param j the cols
      * @return true if successful
      */
-    public boolean setCell(int i, int j) {
+    boolean setCell(int i, int j) {
 
         int value = whoIsPlaying();
 
@@ -47,7 +50,7 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * @param j the cols
      * @return true if successful
      */
-    public boolean setToCross(int i, int j) {
+    private boolean setToCross(int i, int j) {
         // set it to cross only if the cell is empty
         // Otherwise do nothing
 
@@ -71,7 +74,7 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * @param j the col
      * @return true if successful
      */
-    public boolean setToCircle(int i, int j) {
+    private boolean setToCircle(int i, int j) {
 
         // set it to Circle only if the cell is empty
         // Otherwise do nothing
@@ -92,9 +95,6 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
 
     /**
      * Clear the cell by setting its value to 0
-     *
-     * @param i
-     * @param j
      */
     public void clear(int i, int j) {
         setState(i, j, 0);
@@ -122,7 +122,7 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      *
      * @param playerCode takes values either crooss or circle
      */
-    public boolean isWinning(int playerCode) {
+    private boolean isWinning(int playerCode) {
 
         return (checkColumns(playerCode) || checkDiagonals(playerCode) || checkRows(playerCode));
     }
@@ -133,8 +133,7 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * @param playerCode hte code to check for
      * @return true if winning move
      */
-    public boolean checkRows(int playerCode) {
-        boolean won = false;
+    private boolean checkRows(int playerCode) {
 
         // check the rows
         for (int row = 0; row < getHeight(); row++) {
@@ -143,12 +142,11 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
                 total += getState(row, col);
                 //if the addition adds up to the width, true
                 if (total == playerCode * getWidth()) {
-                    won = true;
-                    return won;
+                    return true;
                 }
             }
         }
-        return won;
+        return false;
     }
 
     /**
@@ -157,20 +155,18 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * @param playerCode the player code to check
      * @return true if winning move
      */
-    public boolean checkColumns(int playerCode) {
-        boolean won = false;
+    private boolean checkColumns(int playerCode) {
         for (int col = 0; col < getHeight(); col++) {
             int total = 0;
             for (int row = 0; row < getWidth(); row++) {
                 //if the addition is equal to the widdth, true
                 total += getState(row, col);
                 if (total == playerCode * getWidth()) {
-                    won = true;
-                    return won;
+                    return true;
                 }
             }
         }
-        return won;
+        return false;
     }
 
     /**
@@ -179,17 +175,15 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * @param playerCode the player code to check for thr win
      * @return either true or false if a diagonal win occurs for the player
      */
-    public boolean checkDiagonals(int playerCode) {
+    private boolean checkDiagonals(int playerCode) {
         int total = 0;
-        boolean won = false;
 
         for (int lr = 0; lr < getWidth(); lr++) {
             total += getState(lr, lr);
         }
 
         if (total == playerCode * getWidth()) {
-            won = true;
-            return won;
+            return true;
         }
 
         total = 0;
@@ -199,24 +193,20 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
 
         }
 
-        if (total == playerCode * getWidth()) {
-            won = true;
-            return won;
-        }
-        return won;
+        return total == playerCode * getWidth();
     }
 
     /**
      * Check whether cross is winning
      */
-    public boolean isCrossWinning() {
+    private boolean isCrossWinning() {
         return isWinning(cross);
     }
 
     /**
      * Check whether cross is winning
      */
-    public boolean isCircleWinning() {
+    private boolean isCircleWinning() {
         return isWinning(circle);
     }
 
@@ -224,7 +214,7 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
      * Find who is the winner
      * Returns either 0 (no winner), 1 (cross) or 2 (circle)
      */
-    public int whoIsWinning() {
+    int whoIsWinning() {
 
         if (isCrossWinning())
             return cross;
@@ -238,22 +228,23 @@ public class TicTacToeGame extends TicTacToeMatrix implements Serializable {
 
     }
 
-    public boolean isGameOver() {
+    boolean isGameOver() {
         return mIsGameOver;
     }
 
-    public void setIsGameOver(boolean v) {
+    void setIsGameOver(boolean v) {
         mIsGameOver = v;
     }
 
-    public int whoIsPlaying() {
+    int whoIsPlaying() {
         return mWhoIsPlaying;
     }
 
-    public void setWhoIsPlaying(int v) {
+    void setWhoIsPlaying(int v) {
         mWhoIsPlaying = v;
     }
 
+    // check if there is a blank space in the grid
     public boolean isDraw() {
         for (int col = 0; col < getHeight(); col++) {
             for (int row = 0; row < getWidth(); row++) {

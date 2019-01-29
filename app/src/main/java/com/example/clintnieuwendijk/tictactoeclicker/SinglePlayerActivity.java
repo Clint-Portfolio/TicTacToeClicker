@@ -1,10 +1,12 @@
-package com.example.clintnieuwendijk.tictactoeclicker;
-
-/**
- * Code based on MainActivity by Taaqif Peck
+/*
+ * Single player ClickTacToe game by Clint Nieuwendijk
+ * Based on MainActivity (dynamic Tic Tac Toe board size) by Taaqif Peck
  * https://github.com/Taaqif/TicTacToe-Android
  */
 
+package com.example.clintnieuwendijk.tictactoeclicker;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +17,9 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
+import java.util.Objects;
 
 public class SinglePlayerActivity extends AppCompatActivity {
 
@@ -50,7 +55,7 @@ public class SinglePlayerActivity extends AppCompatActivity {
         createButtonGrid(R.id.gameGrid);
 
         if (savedInstanceState != null) {
-            restoreGame((TicTacToeGame) savedInstanceState.getSerializable("TTTGame"));
+            restoreGame((TicTacToeGame) Objects.requireNonNull(savedInstanceState.getSerializable("TTTGame")));
         } else {
             initGame();
         }
@@ -66,8 +71,8 @@ public class SinglePlayerActivity extends AppCompatActivity {
     }
 
     public void updateScore(int score) {
-        scoreView = (TextView) findViewById(R.id.scoreView);
-        scoreView.setText(String.format("Score: %d", score));
+        scoreView = findViewById(R.id.scoreView);
+        scoreView.setText(String.format(Locale.US, "Score: %d", score));
     }
 
     /**
@@ -90,7 +95,7 @@ public class SinglePlayerActivity extends AppCompatActivity {
         //clear the board data
         Matrix.clear();
         //set the first player
-        playerTurnView = (TextView)findViewById(R.id.playerTurnTextView);
+        playerTurnView = findViewById(R.id.playerTurnTextView);
         setWhoIsPlayingTextView();
         //game is not over
         Matrix.setIsGameOver(false);
@@ -155,6 +160,7 @@ public class SinglePlayerActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     public void onPlayerClick(View v){
         // if the gave is already over, do nothing
         if (Matrix.isGameOver()){
@@ -199,11 +205,10 @@ public class SinglePlayerActivity extends AppCompatActivity {
 
     public boolean updateCell(int index){
 
-        boolean isUpdated = false;
-        int i = (int)(index / numCols);  // row index
-        int j = index % numRows;         // column index
+        int i = (index / numCols);  // row index
+        int j = index % numRows;    // column index
 
-        isUpdated = Matrix.setCell(i, j);
+        boolean isUpdated = Matrix.setCell(i, j);
 
         if (isUpdated){
 
@@ -237,13 +242,13 @@ public class SinglePlayerActivity extends AppCompatActivity {
      * @return the winner
      */
     public int checkWinner(){
-        int i = Matrix.whoIsWinning();
-        return i;
+        return Matrix.whoIsWinning();
     }
 
     /**
      * sets the winning text view
      */
+    @SuppressLint("SetTextI18n")
     protected void setWhoIsPlayingTextView(){
 
         if (whoIsPlaying() == TicTacToeGame.cross)
@@ -254,19 +259,20 @@ public class SinglePlayerActivity extends AppCompatActivity {
 
     /**
      * Initialize the grid of buttons when the user clicks in the button StartOver
-     * @param v
+     *
      */
     public void onStartOverClick(View v) {
         playerDB.updateTokens(currentTokens);
         int totalTokens = playerDB.getTokens();
-        Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
+        Toast.makeText(SinglePlayerActivity.this, String.format(Locale.US, "%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
         initGame();
     }
 
+    // decrease board size if possible and reset the board
     public void decreaseSizeReset(View v) {
         playerDB.updateTokens(currentTokens);
         int totalTokens = playerDB.getTokens();
-        Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
+        Toast.makeText(SinglePlayerActivity.this, String.format(Locale.US, "%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
 
         if (numRows > 2) {
             int newSize = numRows - 1;
@@ -280,10 +286,11 @@ public class SinglePlayerActivity extends AppCompatActivity {
         }
     }
 
+    // increase board size if possible and reset the board
     public void increaseSizeReset(View v){
         playerDB.updateTokens(currentTokens);
         int totalTokens = playerDB.getTokens();
-        Toast.makeText(SinglePlayerActivity.this, String.format("%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
+        Toast.makeText(SinglePlayerActivity.this, String.format(Locale.US, "%d tokens in total", totalTokens), Toast.LENGTH_LONG).show();
 
         if (numRows < maxSize){
             int newSize = numRows + 1;

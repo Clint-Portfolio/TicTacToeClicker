@@ -1,3 +1,8 @@
+/*
+ * options menu for ClickTacToe by Clint Nieuwendijk
+ * the menu has 1 button so far, to reset all progress.
+ * It will drop the upgrade and player database and restart.
+ */
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Intent;

@@ -1,3 +1,8 @@
+/*
+ * The move requester for ClickTacToe by Clint Nieuwendijk
+ * It includes 1 Volley request queue so a function to clear the queue can be called upon
+ */
+
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Context;
@@ -41,6 +46,7 @@ public class MoveRequest implements Response.Listener<JSONObject>, Response.Erro
         }
     }
 
+    // post move to server as JSON object
     public void postMove(Callback activity, int movePlayed, int gameID) {
         this.activity = activity;
 
@@ -59,6 +65,7 @@ public class MoveRequest implements Response.Listener<JSONObject>, Response.Erro
         queue.add(jsonRequest);
     }
 
+    // clear current move requests in the queue
     public void cancelRequests(){
         queue.cancelAll("moveRequest");
         queue.cancelAll(new RequestQueue.RequestFilter() {

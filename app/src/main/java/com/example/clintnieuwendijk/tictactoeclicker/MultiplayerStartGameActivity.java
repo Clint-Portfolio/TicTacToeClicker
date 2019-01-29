@@ -1,5 +1,12 @@
+/*
+ * The 'start multiplayer' activity for ClickTacToe by Clint Nieuwendijk
+ * The game will send requests every 0.5 second until the server responds with a game or until a minute has passed
+ * If a minute has passed, the game times out and sends a cancel request to the server
+ */
+
 package com.example.clintnieuwendijk.tictactoeclicker;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +30,7 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
     int gridSize;
     String playerID;
 
+    @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,23 +47,24 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
     }
 
     public void onRequestGameClick(View v) {
-
         gridSize = Integer.valueOf(spinner.getSelectedItem().toString());
         gameRequester(gridSize, playerID, "looking_for_game");
     }
 
+    // send a request to the server
     public void gameRequester(int gridSize, String playerID, String status){
         Log.d("lookrequestsmade", Integer.toString(lookRequestsMade));
         GameRequest gameRequest = new GameRequest(this);
         gameRequest.requestGame(this, gridSize, playerID, status);
         try {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.MILLISECONDS.sleep(512);
         } catch (InterruptedException e) {
             e.printStackTrace();
             gameRequest.requestGame(this, gridSize, playerID, "cancel");
         }
     }
 
+    // either start the game, send a new response, or time out
     @Override
     public void gotGame(JSONObject response) throws JSONException {
         int gameID = response.getInt("gameID");
@@ -70,7 +79,7 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
             intent.putExtra("startingPlayer", startingPlayer);
             startActivity(intent);
         }
-        else if (lookRequestsMade < 10) {
+        else if (lookRequestsMade < 120) {
             Toast.makeText(this, "Still looking for game", Toast.LENGTH_SHORT).show();
             gameRequester(gridSize, playerID, "waiting_for_game");
             lookRequestsMade++;

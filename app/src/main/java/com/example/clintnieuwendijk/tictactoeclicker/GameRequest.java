@@ -1,3 +1,7 @@
+/*
+ * A game requester for Volley, by Clint Nieuwendijk
+ * The requester sends a JSON file, which the server handles and responds to
+ */
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Context;

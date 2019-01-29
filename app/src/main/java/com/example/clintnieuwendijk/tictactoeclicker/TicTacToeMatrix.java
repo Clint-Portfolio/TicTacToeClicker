@@ -1,16 +1,18 @@
-package com.example.clintnieuwendijk.tictactoeclicker;
-
-/**
- * Design based on Matrix class by Taaqif Peck
+/*
+ * TicTacToe matrix class by Taaqif Peck
  * https://github.com/Taaqif/TicTacToe-Android
  */
+
+package com.example.clintnieuwendijk.tictactoeclicker;
+
+
 public class TicTacToeMatrix {
 
     private int[] Matrix;
     int width;
     int height;
 
-    public TicTacToeMatrix(int width, int height) {
+    TicTacToeMatrix(int width, int height) {
         this.width = width;
         this.height = height;
 
@@ -23,11 +25,11 @@ public class TicTacToeMatrix {
         }
     }
 
-    public int getState(int row, int col){
+    int getState(int row, int col){
         return Matrix[row*width + col];
     }
 
-    public void setState(int row, int col, int state){
+    void setState(int row, int col, int state){
         Matrix[row*width + col] = state;
     }
 

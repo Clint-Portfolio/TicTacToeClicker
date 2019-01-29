@@ -1,5 +1,10 @@
+/*
+ * PlayerDatabase class for ClickTacToe by Clint Nieuwendijk
+ * The class handles all database manipulations for the player
+ */
 package com.example.clintnieuwendijk.tictactoeclicker;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,12 +12,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.Settings;
 import android.util.Log;
 
+import java.util.Locale;
+
 public class PlayerDatabase extends SQLiteOpenHelper {
 
-    SQLiteDatabase db;
+    private SQLiteDatabase db;
     private static PlayerDatabase instance;
 
-    public PlayerDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    private PlayerDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
@@ -22,7 +29,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE 'player' ('_id' integer PRIMARY KEY AUTOINCREMENT NOT NULL, 'name' text, 'tokens' integer)");
     }
 
-    public static PlayerDatabase getInstance(Context context) {
+    static PlayerDatabase getInstance(Context context) {
         if (instance == null) {
             instance = new PlayerDatabase(context, "player", null, 1);
         }
@@ -35,7 +42,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void makePlayer(Context context){
+    void makePlayer(Context context){
 
         this.db = getWritableDatabase();
         Cursor cursor = selectAll();
@@ -51,33 +58,35 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         Log.d("dbsize", Integer.toString(cursor.getCount()));
     }
 
-    public Cursor selectAll() {
-        this.db = getWritableDatabase();
+    private Cursor selectAll() {
+        db = getWritableDatabase();
         return db.rawQuery("SELECT * FROM 'player'", null);
     }
 
-    public int getTokens() {
+    // request tokens from database
+    int getTokens() {
         this.db = getWritableDatabase();
-        String sql = String.format("SELECT * FROM 'player'");
-        Cursor queryResponse = db.rawQuery(sql, null);
+        String sql = "SELECT * FROM 'player'";
+        @SuppressLint("Recycle") Cursor queryResponse = db.rawQuery(sql, null);
 
         queryResponse.moveToFirst();
 
         return queryResponse.getInt(queryResponse.getColumnIndex("tokens"));
     }
 
-    public int updateTokens(int numTokens) {
+    // update number of tokes
+    void updateTokens(int numTokens) {
 
         this.db = getWritableDatabase();
 
         int currentTokens = getTokens();
         currentTokens += numTokens;
-        String sql = String.format("UPDATE 'player' SET 'tokens' = %d", currentTokens);
+        String sql = String.format(Locale.US, "UPDATE 'player' SET 'tokens' = %d", currentTokens);
         db.execSQL(sql);
-        return currentTokens;
     }
 
-    public void resetProgress(){
+    // reset all token progress
+    void resetProgress(){
         db = getWritableDatabase();
         db.execSQL("UPDATE 'player' SET 'tokens' = 0");
     }

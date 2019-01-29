@@ -1,3 +1,8 @@
+/*
+ * The UpgradeDatabase class by Clint Nieuwendijk
+ * this class handles all interactions with the upgrade database
+ */
+
 package com.example.clintnieuwendijk.tictactoeclicker;
 
 import android.content.Context;
@@ -6,12 +11,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.Locale;
+
 public class UpgradeDatabase extends SQLiteOpenHelper {
 
-    SQLiteDatabase db;
+    private SQLiteDatabase db;
     private static UpgradeDatabase instance;
 
-    public UpgradeDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    private UpgradeDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
@@ -22,7 +29,7 @@ public class UpgradeDatabase extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO 'upgrades' ('_id', 'upgradeid', 'name', 'description', 'cost', 'unlocked', 'max_unlock') VALUES (NULL, 'multiplier', 'More tokens!', 'recieve more tokens per click (max tier: 5)', 10, 1, 5), (NULL, 'boardsize', 'Larger board', 'Unlock a larger board (max size: 6x6)', 15, 2, 6)"); // An extra would be: , (NULL, 'AI', 'An AI to play against you (tiers: hard, medium, easy', 20, 0, 0")
     }
 
-    public static UpgradeDatabase getInstance(Context context) {
+    static UpgradeDatabase getInstance(Context context) {
         if (instance == null) {
             instance = new UpgradeDatabase(context, "upgrades", null, 1);
         }
@@ -35,75 +42,66 @@ public class UpgradeDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public Cursor selectAll() {
+    Cursor selectAll() {
         db = getWritableDatabase();
         return db.rawQuery("SELECT * FROM 'upgrades'", null);
     }
 
-    public int getUpgradeCost(long rowIndex){
+    int getUpgradeCost(long rowIndex){
         db = getWritableDatabase();
-        String sql = String.format("SELECT * FROM 'upgrades' WHERE (rowid = %d)", rowIndex);
+        String sql = String.format(Locale.US, "SELECT * FROM 'upgrades' WHERE (rowid = %d)", rowIndex);
         Cursor cursor = db.rawQuery(sql, null);
         cursor.moveToFirst();
         int tier = cursor.getInt(cursor.getColumnIndex("unlocked"));
         int cost = cursor.getInt(cursor.getColumnIndex("cost"));
-
+        cursor.close();
         return tier * cost;
     }
 
-
-
-    public void updateUpgrade(long rowIndex) {
+    void updateUpgrade(long rowIndex) {
         db = getWritableDatabase();
 
-        String sql = String.format("SELECT * FROM 'upgrades' WHERE (rowid = %d)", rowIndex);
+        String sql = String.format(Locale.US, "SELECT * FROM 'upgrades' WHERE (rowid = %d)", rowIndex);
         Cursor queryResponse = db.rawQuery(sql, null);
         queryResponse.moveToFirst();
-
         int tier = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
         int maxTier = queryResponse.getInt(queryResponse.getColumnIndex("max_unlock"));
-
+        queryResponse.close();
         if (tier < maxTier) {
 
             tier++;
 
-            sql = String.format("UPDATE 'upgrades' SET 'unlocked' = %d WHERE (rowid = %d)", tier, rowIndex);
+            sql = String.format(Locale.US, "UPDATE 'upgrades' SET 'unlocked' = %d WHERE (rowid = %d)", tier, rowIndex);
             Log.d("sql", sql);
 
             db.execSQL(sql);
-            sql = String.format("SELECT * FROM 'upgrades' WHERE (rowid = %d)", rowIndex);
-            queryResponse = db.rawQuery(sql, null);
-            queryResponse.moveToFirst();
-            tier = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
-
-            Log.d("Tier", Integer.toString(tier));
 
         }
     }
 
     public int getMultiplier() {
         db = getWritableDatabase();
-        String sql = String.format("SELECT * FROM 'upgrades' WHERE upgradeid = 'multiplier'");
+        String sql = "SELECT * FROM 'upgrades' WHERE upgradeid = 'multiplier'";
         Cursor queryResponse = db.rawQuery(sql, null);
 
         queryResponse.moveToFirst();
-        int multiplier = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
-        return multiplier;
+        int response = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
+        queryResponse.close();
+        return response;
     }
 
-    public int getBoardSize() {
+    int getBoardSize() {
         db = getWritableDatabase();
-        String sql = String.format("SELECT * FROM 'upgrades' WHERE upgradeid = 'boardsize'");
+        String sql = "SELECT * FROM 'upgrades' WHERE upgradeid = 'boardsize'";
         Cursor queryResponse = db.rawQuery(sql, null);
-
-        Log.d("Size =  ", Integer.toString(queryResponse.getCount()));
         queryResponse.moveToFirst();
-        int boardSize = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
-        return boardSize;
+        int response = queryResponse.getInt(queryResponse.getColumnIndex("unlocked"));
+        queryResponse.close();
+        return response;
     }
 
 
-    public void resetProgress() {
+    void resetProgress() {
         db = getWritableDatabase();
         db.execSQL("DROP TABLE 'upgrades'");
         onCreate(db);
