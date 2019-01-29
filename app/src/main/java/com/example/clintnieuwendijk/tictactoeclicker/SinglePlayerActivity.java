@@ -177,13 +177,12 @@ public class SinglePlayerActivity extends AppCompatActivity {
                     Toast.makeText(SinglePlayerActivity.this, "X is the winner!", Toast.LENGTH_SHORT).show();
 
                 }
-                else {
-                    if (whoIsWinning == TicTacToeGame.circle) {
+                else if (whoIsWinning == TicTacToeGame.circle) {
                         playerTurnView.setText("O wins!");
                         Toast.makeText(SinglePlayerActivity.this, "O is the winner!", Toast.LENGTH_SHORT).show();
                     }
                 }
-                if (Matrix.isDraw()) {
+                else if (Matrix.isDraw()) {
                     playerTurnView.setText("It's a draw!");
                     Toast.makeText(SinglePlayerActivity.this, "It's a draw!", Toast.LENGTH_SHORT).show();
                 }
@@ -191,7 +190,6 @@ public class SinglePlayerActivity extends AppCompatActivity {
 
             if (!Matrix.isGameOver())
                 setWhoIsPlayingTextView();
-        }
     }
 
     public int getClickedButtonIndex(View v) {
