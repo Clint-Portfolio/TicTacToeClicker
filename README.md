@@ -25,8 +25,10 @@ Optionally, the player can go online to play, earning more tokens than regular p
 
 <h4>Challenges</h4>
 
-- [ ] AI integration
-- [ ] Upgrade system
-- [ ] Save states, even when the app is closed
-- [ ] Prestige
-- [ ] Online play
+- [ ]  AI integration
+- [x]  Upgrade system
+- [x]  Save states, even when the app is closed
+- [ ]  Prestige
+- [x]  Online play
+
+
