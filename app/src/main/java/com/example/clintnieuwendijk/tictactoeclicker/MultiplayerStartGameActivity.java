@@ -78,6 +78,7 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
         else {
             Toast.makeText(this, "No multiplayer games found, try again later.", Toast.LENGTH_LONG).show();
             lookRequestsMade = 0;
+            gameRequester(gridSize, playerID, "cancel");
         }
 
     }

@@ -31,7 +31,7 @@ public class UpgradeDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE 'entries'");
+        db.execSQL("DROP TABLE 'upgrades'");
         onCreate(db);
     }
 
@@ -105,6 +105,7 @@ public class UpgradeDatabase extends SQLiteOpenHelper {
 
     public void resetProgress() {
         db = getWritableDatabase();
-        db.execSQL("UPDATE 'upgrades' SET 'unlocked' = 0");
+        db.execSQL("DROP TABLE 'upgrades'");
+        onCreate(db);
     }
 }

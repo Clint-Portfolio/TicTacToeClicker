@@ -34,10 +34,10 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
     int multiplier;
 
     int gameID;
-    int requestsMade;
     private int currentTokens;
     int thisPlayer;
     int thisPlayerMove;
+    int requestsMade = 0;
     MoveRequest mr;
 
     @Override
@@ -221,6 +221,7 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             currentTokens += multiplier;
             updateScore(currentTokens);
         }
+        setWhoIsPlayingTextView();
         return isUpdated;
     }
 
@@ -245,8 +246,10 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
      * sets the winning text view
      */
     protected void setWhoIsPlayingTextView(){
-        if (Matrix.isGameOver()) {
+        if (Matrix.isGameOver() || Matrix.isDraw()) {
             setWinnerText();
+            Button butt = findViewById(R.id.returnButton);
+            butt.setText("Game over! return to menu?");
         }
         else {
             if (thisPlayerMove == Matrix.whoIsPlaying()) {
@@ -290,55 +293,35 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
 
         // Update text and check whether there is a winner
         if (index >= 0) {
-            boolean isUpdated = updateCell(index);
-
-            // Now let's check whether there is a winner
-            if (isUpdated) {
-                int whoIsWinning = checkWinner();
-                if (whoIsWinning == TicTacToeGame.cross) {
-                    playerTurnView.setText("X wins!");
-                    Toast.makeText(MultiplayerGame.this, "X is the winner!", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    if (whoIsWinning == TicTacToeGame.circle) {
-                        playerTurnView.setText("O wins!");
-                        Toast.makeText(MultiplayerGame.this, "O is the winner!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                if (Matrix.isDraw()) {
-                    playerTurnView.setText("It's a draw!");
-                    Toast.makeText(MultiplayerGame.this, "It's a draw!", Toast.LENGTH_SHORT).show();
-                }
-            }
+            updateCell(index);
 
             if (Matrix.isGameOver() && !status.equals("finished")) {
                 finishGameRequest();
             }
-            setWhoIsPlayingTextView();
         }
+
         if (!status.equals("finished")) {
-            requestsMade = 0;
+            Log.d("requests made", Integer.toString(requestsMade));
             if (thisPlayerMove != Matrix.whoIsPlaying() && !Matrix.isGameOver()) {
-                if (requestsMade < 36) {
+                if (requestsMade < 1875) {
                     mr.postMove(this, -1, gameID);
                     try {
-                        TimeUnit.SECONDS.sleep(2);
+                        TimeUnit.MILLISECONDS.sleep(64);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     requestsMade++;
-                } else if (requestsMade > 35 && !Matrix.isGameOver()) {
+                } else {
                     Toast.makeText(this, "Player timeout! You win!", Toast.LENGTH_LONG).show();
                     initGame();
                     for (int i = 0; i < numCols * numRows; i++) {
                         updateCell(i);
                         try {
-                            TimeUnit.MICROSECONDS.sleep(333);
+                            TimeUnit.MILLISECONDS.sleep(1024);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-                    playerTurnView.setText("Opponent timed out!");
                     finishGameRequest();
                 }
             }
@@ -353,12 +336,13 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
             for (int i = 0; i < numCols * numRows; i++) {
                 updateCell(i);
                 try {
-                    TimeUnit.MICROSECONDS.sleep(333);
+                    TimeUnit.MILLISECONDS.sleep(1024);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
+        setWhoIsPlayingTextView();
     }
 
     @Override
@@ -373,12 +357,34 @@ public class MultiplayerGame extends AppCompatActivity implements MoveRequest.Ca
     }
 
     public void setWinnerText(){
+        int whoIsWinning = checkWinner();
+        if (whoIsWinning == TicTacToeGame.cross) {
+            playerTurnView.setText("X wins!");
+            Toast.makeText(MultiplayerGame.this, "X is the winner!", Toast.LENGTH_SHORT).show();
 
+        } else if (whoIsWinning == TicTacToeGame.circle) {
+                playerTurnView.setText("O wins!");
+                Toast.makeText(MultiplayerGame.this, "O is the winner!", Toast.LENGTH_SHORT).show();
+            }
+
+        else if (Matrix.isDraw()) {
+            playerTurnView.setText("It's a draw!");
+            Toast.makeText(MultiplayerGame.this, "It's a draw!", Toast.LENGTH_SHORT).show();
+        }
     }
+
     @Override
     public void onStop() {
         super.onStop();
         mr.cancelRequests();
         mr.postMove(this, -3, gameID);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mr.cancelRequests();
+        mr.postMove(this, -3, gameID);
+    }
+
 }
