@@ -66,3 +66,5 @@ The app also implements a REST server for multiplayer gaming.
     - I am a very technical person and have no idea what style is ;)
 
 All in all considered the project is *in my opinion* a solid scaffold to expand the app upon.
+
+:suspect: :full_moon_with_face: :new_moon_with_face:
