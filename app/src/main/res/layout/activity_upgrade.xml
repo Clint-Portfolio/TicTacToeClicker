@@ -10,5 +10,6 @@
     <ListView
         android:id="@+id/upgradeListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="15dp" />
 </LinearLayout>

@@ -12,6 +12,9 @@
         android:id="@+id/gameGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:clickable="true"
         android:columnCount="3"
         android:orientation="horizontal">
@@ -22,18 +25,24 @@
         android:id="@+id/playerTurnTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:text="TextView" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:onClick="onStartOverClick"
         android:text="Reset game" />
 
     <android.support.v7.widget.GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         app:columnCount="2"
         app:rowCount="1">
 
@@ -41,6 +50,8 @@
             android:id="@+id/Button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:onClick="decreaseSizeReset"
             android:text="-1 size" />
 
@@ -48,6 +59,8 @@
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:onClick="increaseSizeReset"
             android:text="+1 size"
             app:layout_column="1"
@@ -58,6 +71,8 @@
         android:id="@+id/scoreView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:text="TextView"
         android:textAlignment="center" />
 

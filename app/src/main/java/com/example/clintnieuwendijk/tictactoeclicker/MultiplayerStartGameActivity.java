@@ -15,10 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -35,10 +37,19 @@ public class MultiplayerStartGameActivity extends AppCompatActivity implements G
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiplayer_start_game);
+
         spinner = findViewById(R.id.gridSizeSpinner);
         ArrayList<Integer> items = new ArrayList<>();
-        for (int i = 2; i < getIntent().getIntExtra("maxSize", 3); i++) {
-            items.add(i);
+        int maxSize = getIntent().getIntExtra("maxSize", 2);
+        TextView tv = findViewById(R.id.multiplayerStartText);
+        if (maxSize < 3) {
+            tv.setText("You need to upgrade your boardsize before you can start multiplayer ;)");
+        }
+        else {
+            tv.setText("Choose your preferred board size!");
+            for (int i = 2; i <= maxSize; i++) {
+                items.add(i);
+            }
         }
         ArrayAdapter spinnerList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         spinner.setAdapter(spinnerList);
