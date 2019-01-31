@@ -32,3 +32,5 @@ Optionally, the player can go online to play, earning more tokens than regular p
 - [x]  Online play
 
 
+<h4>App demo</h4>
+https://youtu.be/WC4P4t9VMFY
