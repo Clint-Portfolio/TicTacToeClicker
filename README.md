@@ -30,6 +30,7 @@ Optionally, the player can go online to play, earning more tokens than regular p
 - [x]  Save states, even when the app is closed
 - [ ]  Prestige
 - [x]  Online play
+- [ ] Long poll server
 
 
 <h4>App demo</h4>
